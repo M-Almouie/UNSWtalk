@@ -14,7 +14,11 @@ app = Flask(__name__)
 # Increment  n and store it in the session cookie
 
 @app.route('/', methods=['GET','POST'])
-@app.route('/login', methods=['GET','POST'])
+@app.route('/homePage', methods=['GET','POST'])
+def login():
+    return render_template('homePage.html')
+
+@app.route('/mainPage', methods=['GET','POST'])
 def start():
     n = session.get('n', 0)
     students = sorted(os.listdir(students_dir))
@@ -23,7 +27,11 @@ def start():
     with open(details_filename) as f:
         details = f.read()
     session['n'] = n + 1
-    return render_template('homePage.html', student_details=details)
+    return render_template('mainPage.html', student_details=details)
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    return render_template('register.html')
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(12)

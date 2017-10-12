@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block body_contents %}
+
+{{student_details}}
+
+<form method="POST" action="">
+    Username: <input type="textfield" name="username">
+    <br>
+    Password: <input type="password" name="password">
+</form>
+<input type="submit" value="Login" class="unswtalk_button">
+
+{% endblock %}
