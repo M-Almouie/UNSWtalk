@@ -1,14 +1,35 @@
 {% extends "base.html" %}
 
 {% block body_contents %}
-
-{{student_details}}
-
-<form method="POST" action="">
-    Username: <input type="textfield" name="username">
+<!--references http://flask.pocoo.org/docs/0.12/patterns/flashing/ -->
+{% if error %}
+    <p class=error><strong>Error:</strong> {{ error }}
+{% endif %}
+<!--references http://flask.pocoo.org/docs/0.12/patterns/flashing/ -->
+<form method="POST" action="authenRegi">
+    Username: <input type="textfield" name="username" style="margin-left: 20px;">
     <br>
-    Password: <input type="password" name="password">
+    <br>
+    Password: <input type="password" name="password" style="margin-left: 25px;">
+    <br>
+    <br>
+    First Name: <input type="textfield" name="firstName" style="margin-left: 20px;">
+    <br>
+    <br>
+    Last Name: <input type="textfield" name="lastName" style="margin-left: 20px;">
+    <br>
+    <br>
+    Email: <input type="textfield" name="email" style="margin-left: 55px;">
+    <br>
+    <br>
+    University : <input type="textfield" name="uni" style="margin-left: 20px;">
+    <br>
+    <br>
+    Date Of Birth: <input type="date" name="birthday" style="margin-left: 35px;">
+    <br>
+    <br>
+    <input type ='submit' name='logbut' value="Send"
+    onclick="window.location='mainPage.html';"/>
+    <input type ='reset' name='resetText'>
 </form>
-<input type="submit" value="Login" class="unswtalk_button">
-
 {% endblock %}
