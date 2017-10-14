@@ -87,6 +87,8 @@ def authenLog():
             realZid = matchLogin(details,'zid: *(.*)')
             realBirthday = matchLogin(details,'birthday: *(.*)')
             realSuburb = matchLogin(details,'home_surburb: *(.*)')
+            realLat = matchLogin(details,'home_latitude: *(.*)')
+            realLng = matchLogin(details,'home_longitude: *(.*)')
             if realPassword == password:
                 masUsername = username
                 masPassword = password
@@ -98,9 +100,11 @@ def authenLog():
                 masDob = realBirthday
                 masFriends = realFriends.split(',')
                 masCourses = realCourses.split(',')
-                return render_template('mainPage.html')
+                masAddress.append(realLat)
+                masAddress.append(realLng)
+                return render_template('profilePage.html', user=masUsername)
             else:
-                error= "Invalid Username or Password choice. real password is(" + realCourses
+                error= "Invalid Username or Password choice. Please enter a vlid Username and Password"
                 return render_template('login.html',error=error)
     error= "Invalid Username or Password choice. Please enter a valid Username and Password333"
     return render_template('login.html',error=error)
@@ -130,6 +134,10 @@ def authenRegi():
         error = "Invalid Email. Please enter a valid Email"
         return render_template('register.html',error=error)
     return render_template('mainPage.html',username=username,password=password)
+
+@app.route('/profilePage',methods=['GET','POST'])
+def profilePage():
+    return render_template('profilePage.html')
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(12)
