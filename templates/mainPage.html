@@ -8,8 +8,11 @@ Welcome {{username}}
 {{student_details}}
 </div>
 
-<form method="POST" action="">
+<form method="POST" action="mainPage">
     <input type="hidden" name="n" value="7">
     <input type="submit" value="Next student" class="unswtalk_button">
+</form>
+<form method="POST" action="homePage">
+  <input type="submit" value="Logout" class="unswtalk_button">
 </form>
 {% endblock %}
