@@ -10,16 +10,23 @@ import re
 students_dir = "dataset-small";
 masUsername = ""
 masPassword = ""
-fullName = ""
-suburb = ""
-email = ""
-uni = ""
-dob = ""
-address = []
-friends = []
-courses = []
+masFullName = ""
+masSuburb = ""
+masEmail = ""
+masUni = ""
+masDob = ""
+masProgram = ""
+masZid = ""
+masAddress = []
+masFriends = []
+masCourses = []
 
 app = Flask(__name__)
+
+def matchLogin(string,pattern):
+    match = re.search(pattern,string)
+    realMatch = match.group(1) if match else ""
+    return realMatch
 
 #Show unformatted details for student "n".
 # Increment  n and store it in the session cookie
@@ -71,22 +78,29 @@ def authenLog():
             details_filename = os.path.join(students_dir,username, "student.txt")
             with open(details_filename) as f:
                 details = f.read()
-            match = re.search('password: *(.*)',details)
-            realPassword = match.group(1) if match else ""
+            realPassword = matchLogin(details,'password: *(.*)')
+            realName = matchLogin(details,'full_name: *(.*)')
+            realFriends = matchLogin(details,'friends: *\((.*)\)')
+            realCourses = matchLogin(details,'courses: *\((.*)\)')
+            realProgram = matchLogin(details,'program: *(.*)')
+            realEmail = matchLogin(details,'email: *(.*)')
+            realZid = matchLogin(details,'zid: *(.*)')
+            realBirthday = matchLogin(details,'birthday: *(.*)')
+            realSuburb = matchLogin(details,'home_surburb: *(.*)')
             if realPassword == password:
-                match = research('friends:\((.*)\)',details)
-
-                match = research('',details)
-                match = research('',details)
-                match = research('',details)
-                match = research('',details)
-                match = research('',details)
-                match = research('',details)
                 masUsername = username
                 masPassword = password
+                masFullName = realName
+                masProgram = realProgram
+                masEmail = realEmail
+                masZid = realZid
+                masSuburb = realSuburb
+                masDob = realBirthday
+                masFriends = realFriends.split(',')
+                masCourses = realCourses.split(',')
                 return render_template('mainPage.html')
             else:
-                error= "Invalid Username or Password choice. real password is(" + realPassword
+                error= "Invalid Username or Password choice. real password is(" + realCourses
                 return render_template('login.html',error=error)
     error= "Invalid Username or Password choice. Please enter a valid Username and Password333"
     return render_template('login.html',error=error)
