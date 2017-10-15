@@ -8,7 +8,7 @@ from flask import Flask, render_template, session, request
 import re
 
 students_dir = "dataset-small";
-masUsername = ""
+masUsername = "kkk"
 masPassword = ""
 masFullName = ""
 masSuburb = ""
@@ -90,19 +90,22 @@ def authenLog():
             realLat = matchLogin(details,'home_latitude: *(.*)')
             realLng = matchLogin(details,'home_longitude: *(.*)')
             if realPassword == password:
-                masUsername = username
-                masPassword = password
-                masFullName = realName
-                masProgram = realProgram
-                masEmail = realEmail
-                masZid = realZid
-                masSuburb = realSuburb
-                masDob = realBirthday
+                session['username'] = username
+                session['password'] = password
+                session['name'] = realName
+                session['program'] = realProgram
+                session['email'] = realEmail
+                session['zid'] = realZid
+                session['suburb'] = realSuburb
+                session['birthday'] = realBirthday
                 masFriends = realFriends.split(',')
                 masCourses = realCourses.split(',')
+                session['friends'] = realFriends
+                session['birthday'] = realCourses
                 masAddress.append(realLat)
                 masAddress.append(realLng)
-                return render_template('profilePage.html', user=masUsername)
+                session['address'] = masAddress
+                return render_template('feed.html', user=username)
             else:
                 error= "Invalid Username or Password choice. Please enter a vlid Username and Password"
                 return render_template('login.html',error=error)
@@ -135,9 +138,25 @@ def authenRegi():
         return render_template('register.html',error=error)
     return render_template('mainPage.html',username=username,password=password)
 
+@app.route('/feed',methods=['GET','POST'])
+def feed():
+    masUsername = g.us
+    if masUsername is None:
+        masUsername = ""
+    return render_template('feed.html', user=masUsername)
+
+
 @app.route('/profilePage',methods=['GET','POST'])
 def profilePage():
-    return render_template('profilePage.html')
+    masUsername = session['username']
+    masPassword = session['password']
+    masFullName = session['name']
+    masProgram = session['program']
+    masEmail = session['email']
+    masZid = session['zid']
+    masSuburb = session['suburb']
+    masDob = session['birthday']
+    return render_template('profilePage.html',user=masUsername,name=masFullName)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(12)
