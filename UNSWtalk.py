@@ -100,8 +100,8 @@ def authenLog():
                 session['birthday'] = realBirthday
                 masFriends = realFriends.split(',')
                 masCourses = realCourses.split(',')
-                session['friends'] = realFriends
-                session['birthday'] = realCourses
+                session['friends'] = masFriends
+                session['birthday'] = masCourses
                 masAddress.append(realLat)
                 masAddress.append(realLng)
                 session['address'] = masAddress
@@ -111,10 +111,6 @@ def authenLog():
                 return render_template('login.html',error=error)
     error= "Invalid Username or Password choice. Please enter a valid Username and Password333"
     return render_template('login.html',error=error)
-    #check for username and password in dataset then authenticate login
-    #if not re.match(r'\@',email):
-    #    error = "Invalid Email. Please enter a valid Email"
-    #    return render_template('register.html',error=error)
 
 @app.route('/authenRegi',methods=['GET','POST'])
 def authenRegi():
@@ -162,12 +158,22 @@ if __name__ == '__main__':
     app.secret_key = os.urandom(12)
     app.run(debug=True)
 
-def displayFriends():
-    n = session.get('n', 0)
+
+def openPosts(user):
+    posts = []
     students = sorted(os.listdir(students_dir))
-    student_to_show = students[n % 3]
-    details_filename = os.path.join(students_dir,student_to_show, "student.txt")
-    with open(details_filename) as f:
-        details = f.read()
-    session['n'] = n + 1
-    return render_template('feed.html',student_details=details)
+    student_to_show = user
+    posts_dir = os.path.join(students_dir,student_to_show)
+    for filename in os.listdir(posts_dir):
+        if re.match(r'\w',filename):
+            with open(posts_dir) as f:
+                details = f.read()
+                posts.append(details)
+                # I'm thinking of doing html.write for each post for each user
+                # from the py??
+                displayPost(details)
+    return render_template('feed.html',profile_posts=posts)
+
+def displayPost(details):
+
+    return details
