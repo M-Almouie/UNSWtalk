@@ -5,9 +5,31 @@
 
 Welcome {{user}}
 <br>
-{{student_details}}
+<img src="{{ img }}">
+<br>
+Profile details:
 </div>
-{{name}}
+Full Name: {{name}}<br>
+Username: {{user}}<br>
+Program: {{prog}}<br>
+Email Address: {{email}}<br>
+ZID: {{zid}}<br>
+Birth Date: {{dob}}<br>
+Courses at UNSW: {{courses}}<br>
+<br>
+{% if posts %}
+{% for x in posts %}
+  {{x.decode('utf-8','ignore')}}<br>
+{% endfor %}
+{% endif %}
+
+<form method="POST" action="profilePage">
+  <textarea name="post" placeholder="Write a post...">
+
+  </textarea>
+  <input type="submit" value="Post it!" class="unswtalk_button">
+</form>
+
 <form method="POST" action="profilePage">
     <input type="hidden" name="n" value="7">
     <input type="submit" value="Next student" class="unswtalk_button">

@@ -8,7 +8,7 @@ from flask import Flask, render_template, session, request
 import re
 
 students_dir = "dataset-small";
-masUsername = "kkk"
+masUsername = ""
 masPassword = ""
 masFullName = ""
 masSuburb = ""
@@ -28,6 +28,16 @@ def matchLogin(string,pattern):
     realMatch = match.group(1) if match else ""
     return realMatch
 
+def getPosts(user):
+    posts = []
+    students = sorted(os.listdir(students_dir))
+    student_to_show = user
+    for filename in os.listdir(os.path.join(students_dir,student_to_show)):
+        fileDetails = os.path.join(students_dir,student_to_show,filename)
+        with open(fileDetails) as f:
+            details = f.read()
+            posts.append(details)
+    return posts
 #Show unformatted details for student "n".
 # Increment  n and store it in the session cookie
 
@@ -101,11 +111,17 @@ def authenLog():
                 masFriends = realFriends.split(',')
                 masCourses = realCourses.split(',')
                 session['friends'] = masFriends
-                session['birthday'] = masCourses
+                session['course'] = masCourses
                 masAddress.append(realLat)
                 masAddress.append(realLng)
                 session['address'] = masAddress
-                return render_template('feed.html', user=username)
+                masPosts = getPosts(username)
+                img = "/static/"+students_dir+"/"+username+"/img.jpg"
+                session['img'] = img
+                post = None
+                return render_template('profilePage.html',user=username,name=realName,
+                 prog=realProgram, email=realEmail, zid=realZid,sub=realSuburb,
+                 dob=realBirthday,courses=masCourses,post=masPosts,img = img)
             else:
                 error= "Invalid Username or Password choice. Please enter a vlid Username and Password"
                 return render_template('login.html',error=error)
@@ -144,6 +160,8 @@ def feed():
 
 @app.route('/profilePage',methods=['GET','POST'])
 def profilePage():
+    #masUsername = session['username']
+    newPost = request.form.get('post')
     masUsername = session['username']
     masPassword = session['password']
     masFullName = session['name']
@@ -152,28 +170,13 @@ def profilePage():
     masZid = session['zid']
     masSuburb = session['suburb']
     masDob = session['birthday']
-    return render_template('profilePage.html',user=masUsername,name=masFullName)
+    masCourses = session['course']
+    masPosts = getPosts(masUsername)
+    img = session['img']
+    return render_template('profilePage.html',user=masUsername,name=masFullName,
+     prog=masProgram, email=masEmail, zid = masZid,sub= masSuburb,
+     dob = masDob,courses=masCourses,posts=masPosts, img=img)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(12)
     app.run(debug=True)
-
-
-def openPosts(user):
-    posts = []
-    students = sorted(os.listdir(students_dir))
-    student_to_show = user
-    posts_dir = os.path.join(students_dir,student_to_show)
-    for filename in os.listdir(posts_dir):
-        if re.match(r'\w',filename):
-            with open(posts_dir) as f:
-                details = f.read()
-                posts.append(details)
-                # I'm thinking of doing html.write for each post for each user
-                # from the py??
-                displayPost(details)
-    return render_template('feed.html',profile_posts=posts)
-
-def displayPost(details):
-
-    return details
