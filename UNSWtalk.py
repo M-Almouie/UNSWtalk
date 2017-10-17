@@ -33,10 +33,11 @@ def getPosts(user):
     students = sorted(os.listdir(students_dir))
     student_to_show = user
     for filename in os.listdir(os.path.join(students_dir,student_to_show)):
-        fileDetails = os.path.join(students_dir,student_to_show,filename)
-        with open(fileDetails) as f:
-            details = f.read()
-            posts.append(details)
+        if(re.match(r'\d',filename)):
+            fileDetails = os.path.join(students_dir,student_to_show,filename)
+            with open(fileDetails) as f:
+                details = f.read()
+                posts.append(details)
     return posts
 #Show unformatted details for student "n".
 # Increment  n and store it in the session cookie
