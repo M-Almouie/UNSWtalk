@@ -1,40 +1,37 @@
-{% extends "base.html" %}
-
+{% extends "mainBase.html" %}
 {% block body_contents %}
-<div class="unswtalk_student_details">
 
-Welcome {{user}}
+<center>
+  Welcome {{user}}<br>
+  <form method="POST" action="profilePage">
+    <textarea name="post" placeholder="Write a post...">
+    </textarea>
+    <input type="submit" value="Post it!" class="unswtalk_button">
+  </form>
+  <img src="static/dataset-small/{{user}}//img.jpg">
+  <br>
+
+  <br>
+</center>
+<h2>Personal Info</h2>
+<h3><i>Full Name: </i></h3><h4>{{name}}</h4><br>
+<h3><i>Username:</i></h3> <h4>{{user}}</h4><br>
+<h3><i>Program: </i></h3><h4>{{prog}}</h4><br>
+<h3><i>Email Address:</i></h3> <h4>{{email}}</h4><br>
+<h3><i>ZID:</i></h3> <h4>{{zid}}</h4><br>
+<h3><i>Birth Date:</i></h3> <h4>{{dob}}</h4><br>
+<h3><i>Courses at UNSW:</i></h3><h4> {{courses}}</h4><br>
 <br>
-<img src="{{ img }}">
-<br>
-Profile details:
-</div>
-Full Name: {{name}}<br>
-Username: {{user}}<br>
-Program: {{prog}}<br>
-Email Address: {{email}}<br>
-ZID: {{zid}}<br>
-Birth Date: {{dob}}<br>
-Courses at UNSW: {{courses}}<br>
-<br>
+<h2>Posts</h2>
+
 {% if posts %}
-{% for x in posts %}
-  {{x.decode('utf-8','ignore')}}<br>
-{% endfor %}
+  {% for x in posts %}
+    {{x.decode('utf-8','ignore')}}<br>
+  {% endfor %}
 {% endif %}
+{%if newPost%}
+  <h3><i>Most recent Post</i></h3></i>
+  {{newPost}}
+{%endif%}
 
-<form method="POST" action="profilePage">
-  <textarea name="post" placeholder="Write a post...">
-
-  </textarea>
-  <input type="submit" value="Post it!" class="unswtalk_button">
-</form>
-
-<form method="POST" action="profilePage">
-    <input type="hidden" name="n" value="7">
-    <input type="submit" value="Next student" class="unswtalk_button">
-</form>
-<form method="POST" action="homePage">
-  <input type="submit" value="Logout" class="unswtalk_button">
-</form>
 {% endblock %}

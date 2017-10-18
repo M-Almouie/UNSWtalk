@@ -3,9 +3,15 @@
 # as a starting point for COMP[29]041 assignment 2
 # https://cgi.cse.unsw.edu.au/~cs2041/assignments/UNSWtalk/
 
+
+# No info passed, initialise to "" or N/A
+##################################################################
+
 import os
-from flask import Flask, render_template, session, request
+from flask import Flask, render_template, session, request,redirect
 import re
+from datetime import datetime
+import random
 
 students_dir = "dataset-small";
 masUsername = ""
@@ -37,6 +43,7 @@ def getPosts(user):
             fileDetails = os.path.join(students_dir,student_to_show,filename)
             with open(fileDetails) as f:
                 details = f.read()
+
                 posts.append(details)
     return posts
 #Show unformatted details for student "n".
@@ -110,6 +117,8 @@ def authenLog():
                 session['suburb'] = realSuburb
                 session['birthday'] = realBirthday
                 masFriends = realFriends.split(',')
+                for x in masFriends:
+                    x = re.sub(r'^ +',"",x)
                 masCourses = realCourses.split(',')
                 session['friends'] = masFriends
                 session['course'] = masCourses
@@ -118,11 +127,13 @@ def authenLog():
                 session['address'] = masAddress
                 masPosts = getPosts(username)
                 img = "/static/"+students_dir+"/"+username+"/img.jpg"
+                # if no image pass question mark image
                 session['img'] = img
                 post = None
-                return render_template('profilePage.html',user=username,name=realName,
-                 prog=realProgram, email=realEmail, zid=realZid,sub=realSuburb,
-                 dob=realBirthday,courses=masCourses,post=masPosts,img = img)
+                return redirect("/profilePage", code=302)
+                #return render_template('profilePage.html',user=username,name=realName,
+                 #prog=realProgram, email=realEmail, zid=realZid,sub=realSuburb,
+                 #dob=realBirthday,courses=masCourses,posts=masPosts,img = img)
             else:
                 error= "Invalid Username or Password choice. Please enter a vlid Username and Password"
                 return render_template('login.html',error=error)
@@ -153,17 +164,46 @@ def authenRegi():
 
 @app.route('/feed',methods=['GET','POST'])
 def feed():
-    masUsername = g.us
-    if masUsername is None:
-        masUsername = ""
-    return render_template('feed.html', user=masUsername)
+    masUsername = session['username']
+    img = session['img']
+    masFriends = session['friends']
+    feedPosts = getPosts(masUsername)
+    for x in masFriends:
+        if len(feedPosts) > 50:
+            break
+        feedPosts.extend(getPosts(x.strip()))
+    random.shuffle(feedPosts)
+    return render_template('feed.html', user=masUsername, img=img,
+    posts = feedPosts)
 
 
 @app.route('/profilePage',methods=['GET','POST'])
 def profilePage():
-    #masUsername = session['username']
-    newPost = request.form.get('post')
+    maxi = None
+    temp = None
     masUsername = session['username']
+    newPost = request.form.get('post')
+    if newPost:
+        newPost = "message: " + newPost
+        # Following 2 lines are from
+        # https://stackoverflow.com/questions/10624937/convert-datetime-object-to-a-string-of-date-only-in-python#10
+        now=datetime.now()
+        newPost = newPost+"\nTime:"+now.isoformat()
+        newPost = newPost + "\nFrom:"+masUsername
+        maxi = 1
+        for filename in os.listdir(os.path.join(students_dir,masUsername)):
+            temp = re.search(r'^(\d).',filename)
+            match = temp.group(1) if temp else ""
+            if temp:
+                if match > maxi:
+                    maxi = match
+        maxi = int(maxi)
+        maxi = maxi + 1
+        maxi = str(maxi)
+        maxi = maxi+".txt"
+        file = open(os.path.join(students_dir,masUsername,maxi), 'w')
+        file.write(newPost)
+        file.close()
     masPassword = session['password']
     masFullName = session['name']
     masProgram = session['program']
@@ -176,8 +216,50 @@ def profilePage():
     img = session['img']
     return render_template('profilePage.html',user=masUsername,name=masFullName,
      prog=masProgram, email=masEmail, zid = masZid,sub= masSuburb,
-     dob = masDob,courses=masCourses,posts=masPosts, img=img)
+     dob = masDob,courses=masCourses,posts=masPosts, img=img, newPost=newPost,maxi=maxi)
+
+@app.route('/friendList',methods=['GET','POST'])
+def friendsList():
+    masUsername = session['username']
+    masFriends = session['friends']
+    img = session['img']
+    return render_template('friendList.html',user=masUsername, friends=masFriends,img=img)
+
+@app.route('/<friend>',methods=['GET','POST'])
+def displayFriendPage(friend):
+    masUsername = session['username']
+    masPosts = getPosts(masUsername)
+    students = sorted(os.listdir(students_dir))
+    details_filename = os.path.join(students_dir,friend, "student.txt")
+    with open(details_filename) as f:
+        details = f.read()
+    realName = matchLogin(details,'full_name: *(.*)')
+    realFriends = matchLogin(details,'friends: *\((.*)\)')
+    realCourses = matchLogin(details,'courses: *\((.*)\)')
+    realProgram = matchLogin(details,'program: *(.*)')
+    realEmail = matchLogin(details,'email: *(.*)')
+    realZid = matchLogin(details,'zid: *(.*)')
+    realBirthday = matchLogin(details,'birthday: *(.*)')
+    realSuburb = matchLogin(details,'home_surburb: *(.*)')
+    realPosts = getPosts(friend)
+    img = session['img']
+    return render_template('showFriend.html',user=masUsername,name=realName,
+    prog=realProgram, email=realEmail, zid = realZid,sub= realSuburb,
+    dob = realBirthday,courses=realCourses,friends=realFriends,friend=friend
+    ,img=img,posts=realPosts)
+
+@app.route('/settings',methods=['GET','POST'])
+def showSettings():
+    masUsername = session['username']
+    img = session['img']
+    return render_template('settings.html', user=masUsername, img=img)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(12)
     app.run(debug=True)
+
+
+
+#<form method="POST" action="homePage">
+#<li><input type="submit" value="Logout" class="unswtalk_button"></li>
+#</form>

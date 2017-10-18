@@ -1,0 +1,131 @@
+<html lang="en">
+<head>
+<title>unswtalk</title>
+<link href="{{url_for('static', filename='UNSWtalk.css')}}") rel="stylesheet">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <div class="unswtalk_heading">
+  UNSWtalk
+  </div>
+  <!-- Bootstrap core CSS -->
+  <link href="static/bootstrap.min.css" rel="stylesheet">
+  <link rel = "stylesheet" type = "text/css" href = "static/UNSWtalk.css">
+  <!-- Custom fonts for this template -->
+  <link href="static/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <!-- Plugin CSS -->
+  <link href="static/magnific-popup.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="static/creative.min.css" rel="stylesheet">
+
+  <!--font awesome -->
+  <link rel="static/stylesheet" href="font-awesome.min.css">
+</head>
+<body>
+
+  <body id="page-top">
+
+  <!-- Navigation -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="static/jquery.min.js.下载"></script>
+  <script src="static/popper.min.js.下载"></script>
+  <script src="static/bootstrap.min.js.下载"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="static/jquery.easing.min.js.下载"></script>
+  <script src="static/scrollreveal.min.js.下载"></script>
+  <script src="static/jquery.magnific-popup.min.js.下载"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="static/creative.min.js.下载"></script>
+  <!-- font awesome icon -->
+  <script src="https://use.fontawesome.com/13b2b03dd2.js"></script>
+
+<div class="unswtalk_student_details">
+  <style>
+  ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #555;
+  }
+
+  li img{
+      float: left;
+  }
+
+  li h3{
+      float: left;
+      color: #FF4500;
+  }
+
+  li input {
+      float: right;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+  }
+
+  li input:hover:not(.active) {
+      background-color: rgb(255,69,0);
+  }
+
+  .active {
+      background-color: #FF4500;
+  }
+  </style>
+<ul>
+  <form method="POST" >
+      <a href="profilePage">
+        <li><img src="{{ img }}" height="60" width="60"></li>
+      </a>
+      <li><h3>Welcome {{user}}</h3></li>
+  </form>
+  <center>
+    <form class="form-wrapper">
+        <input type="text" id="search" placeholder="Not working..." required>
+        <input type="submit" value="go" id="submit">
+    </form>
+  </center>
+  <form method="POST" action="settings">
+      <li><input type="submit" value="Settings" class="unswtalk_button"action="settings"></li>
+  </form>
+  </form>
+  <form method="POST" action="friendList">
+      <li><input type="submit" value="Friends" class="unswtalk_button" action="friendList"></li>
+  </form>
+<form method="POST" action="feed">
+  <li><input type="submit" value="Feed" class="unswtalk_button" action="profilePage"></li>
+</form>
+  <form method="POST" action="profilePage">
+      <li><input type="submit" value="Home Page" class="unswtalk_button" action="profilePage"></li>
+  </form>
+
+</ul>
+{% block body_contents %}
+{% endblock %}
+<center>
+  <footer>
+      <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+          <div class="footer">
+           <button style="color: black;font-weight: bold"> About Us </button>
+           <button style="color: black;font-weight: bold"> FAQ </button>
+           <p> copyright &copy;2017</p>
+         </div>
+        </div>
+      </div>
+      </div>
+  </footer>
+</center>
+</body>
+</html>

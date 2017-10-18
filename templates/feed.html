@@ -1,18 +1,15 @@
-{% extends "base.html" %}
+{% extends "mainBase.html" %}
 
 {% block body_contents %}
 <div class="unswtalk_student_details">
 
-Welcome {{user}}
 <br>
 {{student_details}}
 </div>
 
-<form method="POST" action="profilePage">
-    <input type="hidden" name="n" value="7">
-    <input type="submit" value="Next student" class="unswtalk_button">
-</form>
-<form method="POST" action="homePage">
-  <input type="submit" value="Logout" class="unswtalk_button">
-</form>
+{% if posts %}
+  {% for x in posts %}
+    {{x.decode('utf-8','ignore')}}<br>
+  {% endfor %}
+{% endif %}
 {% endblock %}
