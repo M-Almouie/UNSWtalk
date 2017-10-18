@@ -48,6 +48,19 @@
 
 <div class="unswtalk_student_details">
   <style>
+  div {
+      width: 1340px;
+      padding: 10px;
+      border: 5px solid gray;
+      margin: 0;
+  }
+  .posts {
+    width: 900px;
+    padding: 10px;
+    border: 5px solid gray;
+    margin: 0;
+  }
+
   ul {
       list-style-type: none;
       margin: 0;
@@ -129,28 +142,22 @@
 <h3><i>Email Address:</i></h3> <h4>{{email}}</h4><br>
 <h3><i>ZID:</i></h3> <h4>{{zid}}</h4><br>
 <h3><i>Birth Date:</i></h3> <h4>{{dob}}</h4><br>
-<h3><i>Courses at UNSW:</i></h3><h4> {{courses}}</h4><br>
+<h3><i>Courses at UNSW:</i></h3><h4>{{courses}}</h4><br>
 <br>
 <h2>Posts</h2>
 
-{% if posts %}
-  {% for x in posts %}
-    {{x.decode('utf-8','ignore')}}<br>
-  {% endfor %}
-{% endif %}
+<div class="posts">
+  {% if posts %}
+    {% for x in posts %}
+      {{x.decode('utf-8','ignore')}}<br>
+    {% endfor %}
+  {% endif %}
+</div>
 <center>
   <footer>
-      <div class="container">
-      <div class="row">
-        <div class="col-lg-8 mx-auto text-center">
-          <div class="footer">
-           <button style="color: black;font-weight: bold"> About Us </button>
-           <button style="color: black;font-weight: bold"> FAQ </button>
-           <p> copyright &copy;2017</p>
-         </div>
-        </div>
-      </div>
-      </div>
+   <button style="color: black;font-weight: bold"> About Us </button>
+   <button style="color: black;font-weight: bold"> FAQ </button>
+   <p> copyright &copy;2017</p>
   </footer>
 </center>
 </body>
