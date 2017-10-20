@@ -43,7 +43,11 @@ def getPosts(user):
             fileDetails = os.path.join(students_dir,student_to_show,filename)
             with open(fileDetails) as f:
                 details = f.read()
-
+                details = re.sub(r'longitude:.*',"",details)
+                details = re.sub(r'latitude:.*',"",details)
+                details = re.sub(r'message:',"",details)
+                details = re.sub(r'from:',"",details)
+                details = re.sub(r'time:',"",details)
                 posts.append(details)
     return posts
 #Show unformatted details for student "n".

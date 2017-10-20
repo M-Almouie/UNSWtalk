@@ -2,15 +2,14 @@
 {% block body_contents %}
 
 <center>
-  Welcome {{user}}<br>
+  <br><br><br><br>
+  <img src="static/dataset-small/{{user}}//img.jpg">
+  <br><br><br>
   <form method="POST" action="profilePage">
     <textarea name="post" placeholder="Write a post...">
     </textarea>
     <input type="submit" value="Post it!" class="unswtalk_button">
   </form>
-  <img src="static/dataset-small/{{user}}//img.jpg">
-  <br>
-
   <br>
 </center>
 <h2>Personal Info</h2>

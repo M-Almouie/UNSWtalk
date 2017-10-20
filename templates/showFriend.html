@@ -146,13 +146,14 @@
 <br>
 <h2>Posts</h2>
 
-<div class="posts">
+
   {% if posts %}
     {% for x in posts %}
-      {{x.decode('utf-8','ignore')}}<br>
+      <div class="posts">
+        {{x.decode('utf-8','ignore')}}<br>
+      </div>
     {% endfor %}
   {% endif %}
-</div>
 <center>
   <footer>
    <button style="color: black;font-weight: bold"> About Us </button>
