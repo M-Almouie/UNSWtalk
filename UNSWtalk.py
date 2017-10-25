@@ -134,7 +134,7 @@ def authenLog():
                 # if no image pass question mark image
                 session['img'] = img
                 post = None
-                return redirect("/profilePage", code=302)
+                return redirect("/~z5114185/ass2/UNSWtalk.cgi/profilePage", code=302)
                 #return render_template('profilePage.html',user=username,name=realName,
                  #prog=realProgram, email=realEmail, zid=realZid,sub=realSuburb,
                  #dob=realBirthday,courses=masCourses,posts=masPosts,img = img)
@@ -204,7 +204,7 @@ def searchList():
     for filename in os.listdir(os.path.join("static/"+students_dir)):
         temp = re.search(r'^('+requ+')',filename)
         match = temp.group(1) if temp else ""
-        
+
 
 @app.route('/profilePage',methods=['GET','POST'])
 def profilePage():
