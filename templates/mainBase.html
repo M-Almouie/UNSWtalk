@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  
+
   <!-- Bootstrap core CSS -->
   <link href="static/css/bootstrap.min.css" rel="stylesheet">
   <link rel = "stylesheet" type = "text/css" href = "static/css/UNSWtalk.css">
@@ -73,8 +73,8 @@
       <li><h3>Welcome {{user}}</h3></li>
   </form>
   <center>
-    <form class="form-wrapper">
-        <input type="text" id="search" placeholder="Not working..." required>
+    <form class="form-wrapper" method="POST" action="searchList">
+        <input type="text" id="search" placeholder="Search..." required>
         <input type="submit" value="go" id="submit">
     </form>
   </center>

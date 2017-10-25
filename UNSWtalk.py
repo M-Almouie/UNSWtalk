@@ -147,11 +147,16 @@ def authenLog():
 @app.route('/authenRegi',methods=['GET','POST'])
 def authenRegi():
     username = request.form.get('username','')
-    #get Username from input
-    #fix up input conditions for security
     password = request.form.get('password','')
+    email = request.form.get('email','')
+    fullName = request.form.get('fullName','')
+    suburb = request.form.get('suburb','')
+    birthday = request.form.get('birthday','')
     if len(username) > 32:
         username = username[:32]
+    if os.path.isdir("static/"+students_dir+"/"+username) == True:
+        error = "Invalid Username choice. Please enter a different Username"
+        return render_template('register.html',error=error)
     username = re.sub(r'\@|\||\<|\>|\#',"",username)
     if len(password) > 32:
         password = password[:32]
@@ -164,7 +169,18 @@ def authenRegi():
     if not re.match(r'\@',email):
         error = "Invalid Email. Please enter a valid Email"
         return render_template('register.html',error=error)
-    return render_template('mainPage.html',username=username,password=password)
+    newDir = "static/"+students_dir+"/"+username
+    os.makedirs(newDir)
+    studFile = newDir+"/student.txt"
+    infoFile = open(studFile,'w')
+    infoFile.write("zid: "+username+"\n")
+    infoFile.write("password: "+password+"\n")
+    infoFile.write("suburb: "+suburb+"\n")
+    infoFile.write("email: "+email+"\n")
+    infoFile.write("birthday: "+birthday+"\n")
+    infoFile.write("full_name: "+fullName+"\n")
+    infoFile.close()
+    return render_template('mainPage.html',username=password)
 
 @app.route('/feed',methods=['GET','POST'])
 def feed():
@@ -180,6 +196,15 @@ def feed():
     return render_template('feed.html', user=masUsername, img=img,
     posts = feedPosts)
 
+@app.route('/searchList',methods=['GET','POST'])
+def searchList():
+    masUsername = session['username']
+    img = session['img']
+    requ = request.form.get('searchList')
+    for filename in os.listdir(os.path.join("static/"+students_dir)):
+        temp = re.search(r'^('+requ+')',filename)
+        match = temp.group(1) if temp else ""
+        
 
 @app.route('/profilePage',methods=['GET','POST'])
 def profilePage():
