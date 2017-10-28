@@ -103,8 +103,8 @@
       <li><h3>Welcome {{user}}</h3></li>
   </form>
   <center>
-    <form class="form-wrapper">
-        <input type="text" id="search" placeholder="Not working..." required>
+    <form class="form-wrapper" method="POST" action="searchList">
+        <input type="text" name="search" placeholder="Search..." required>
         <input type="submit" value="go" id="submit">
     </form>
   </center>
@@ -130,7 +130,7 @@
     </textarea>
     <input type="submit" value="Post it!" class="unswtalk_button">
   </form>
-  <img src="../static/dataset-small/{{friend}}//img.jpg">
+  <img src="../static/dataset-small/{{friend}}//img.jpg" onerror="this.src='static/img/noImg.png';">
   <br>
 
   <br>
@@ -150,7 +150,7 @@
   {% if posts %}
     {% for x in posts %}
       <div class="posts">
-        {{x}}<br>
+        {{x.decode('utf-8','ignore')}}<br>
       </div>
     {% endfor %}
   {% endif %}

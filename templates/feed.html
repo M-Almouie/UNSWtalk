@@ -9,7 +9,7 @@
 
 {% if posts %}
   {% for x in posts %}
-    {{x}}<br>
+    {{x.decode('utf-8','ignore')}}<br>
   {% endfor %}
 {% endif %}
 {% endblock %}

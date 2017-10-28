@@ -6,7 +6,8 @@
 <h2>Friends List</h2>
 <br>
 {% for x in friends: -%}
-  <h3><li><a href="{{friends[loop.index0].strip()}}"><img src="static/dataset-small/{{friends[loop.index0].strip()}}/img.jpg" height="60" width="60">
+  <h3><li><a href="{{friends[loop.index0].strip()}}"><img src="static/dataset-small/{{friends[loop.index0].strip()}}/img.jpg"
+     height="60" width="60" alt="static/img/noImg.png">
   </a>{{friends[loop.index0].strip()}}</li></h3>
   <br>
 {%- endfor %}

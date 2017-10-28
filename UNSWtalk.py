@@ -9,7 +9,7 @@
 
 import os
 from flask import Flask, render_template, session, request,redirect
-import re
+import re, os
 from datetime import datetime
 import random
 
@@ -38,9 +38,9 @@ def getPosts(user):
     posts = []
     students = sorted(os.listdir(students_dir))
     student_to_show = user
-    for filename in os.listdir(os.path.join(students_dir,student_to_show)):
+    for filename in os.listdir(os.path.join("static",students_dir,student_to_show)):
         if(re.match(r'\d',filename)):
-            fileDetails = os.path.join(students_dir,student_to_show,filename)
+            fileDetails = os.path.join("static",students_dir,student_to_show,filename)
             with open(fileDetails) as f:
                 details = f.read()
                 details = re.sub(r'longitude:.*',"",details)
@@ -94,10 +94,10 @@ def authenLog():
         error = "Invalid Username or Password choice. Please choose a valid Username or Password1111"
         return render_template('login.html',error=error)
     password = re.sub(r'\@|\||\<|\>|\#',"",password)
-    students = sorted(os.listdir(students_dir))
+    students = sorted(os.listdir("static/"+students_dir))
     for x in students:
         if re.match(r''+username+'',x):
-            details_filename = os.path.join(students_dir,username, "student.txt")
+            details_filename = os.path.join("static",students_dir,username, "student.txt")
             with open(details_filename) as f:
                 details = f.read()
             realPassword = matchLogin(details,'password: *(.*)')
@@ -134,7 +134,7 @@ def authenLog():
                 # if no image pass question mark image
                 session['img'] = img
                 post = None
-                return redirect("/~z5114185/ass2/UNSWtalk.cgi/profilePage", code=302)
+                return redirect("/profilePage", code=302)
                 #return render_template('profilePage.html',user=username,name=realName,
                  #prog=realProgram, email=realEmail, zid=realZid,sub=realSuburb,
                  #dob=realBirthday,courses=masCourses,posts=masPosts,img = img)
@@ -180,7 +180,7 @@ def authenRegi():
     infoFile.write("birthday: "+birthday+"\n")
     infoFile.write("full_name: "+fullName+"\n")
     infoFile.close()
-    return render_template('mainPage.html',username=password)
+    return render_template('profilePage.html',username=password)
 
 @app.route('/feed',methods=['GET','POST'])
 def feed():
@@ -200,10 +200,51 @@ def feed():
 def searchList():
     masUsername = session['username']
     img = session['img']
-    requ = request.form.get('searchList')
+    requ = request.form.get('search')
+    listRes = []
+    link = []
     for filename in os.listdir(os.path.join("static/"+students_dir)):
-        temp = re.search(r'^('+requ+')',filename)
+        temp = re.search(r'(%s)' % requ,filename)
         match = temp.group(1) if temp else ""
+        with open("static/"+students_dir+"/"+filename+"/student.txt") as f:
+            studInfo = f.read()
+        temp2 = re.search(r'full_name: *([A-Za-z ]*%s[A-Za-z ]*)' % requ, studInfo)
+        #test = re.match(r'full_name:.*', studInfo)
+        #listRes.append(studInfo)
+        match2 = temp2.group(1) if temp2 else ""
+        if (match2):
+            listRes.append(match2+" ("+filename+")")
+            link.append(filename)
+        elif match:
+            temp3 = re.search(r'full_name: *(.*)', studInfo)
+            name = temp3.group(1) if temp3 else ""
+            listRes.append(name+" ("+filename+")")
+            link.append(filename)
+
+    return render_template('searchList.html', user=masUsername, img=img,
+    list=listRes,link=link,requ=requ)
+
+@app.route('/forgotPass',methods=['GET','POST'])
+def renderForgot():
+    error = None
+    return render_template('forgotPass.html',error=error)
+
+@app.route('/forgotPassAuth',methods=['GET','POST'])
+def getNewPassword():
+    email = request.form.get('forgotEmail')
+    if re.match(r'[A-Za-z0-9\.]+\@[A-Za-z0-9\.]+',email):
+        code = ""
+        for i in range(16):
+            code += random.choice('0123456789ABCDEF')
+        os.system('echo "This is an email requesting a password change for your UNSWtalk account.'+
+        'If you have requested this please copy the paste the following code on the Reset Password'+
+        ' Page"+code+"If you havent requested this, please ignore this email.'+
+        'Cheers - UNSWTalk Admin "| mail -s "subject of email" '+email+'')
+        session['code'] = code
+        return render_template('homePage.html')
+    else:
+        error = "Please enter a valid email address associated with UNSWtalk"
+        return render_template('forgotPass.html',error=error)
 
 
 @app.route('/profilePage',methods=['GET','POST'])
@@ -258,8 +299,8 @@ def friendsList():
 def displayFriendPage(friend):
     masUsername = session['username']
     masPosts = getPosts(masUsername)
-    students = sorted(os.listdir(students_dir))
-    details_filename = os.path.join(students_dir,friend, "student.txt")
+    students = sorted(os.listdir("static/"+students_dir))
+    details_filename = os.path.join("static",students_dir,friend, "student.txt")
     with open(details_filename) as f:
         details = f.read()
     realName = matchLogin(details,'full_name: *(.*)')

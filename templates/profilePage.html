@@ -6,9 +6,8 @@
   <img src="static/dataset-small/{{user}}//img.jpg">
   <br><br><br>
   <form method="POST" action="profilePage">
-    <textarea name="post" placeholder="Write a post...">
-    </textarea>
-    <input type="submit" value="Post it!" class="unswtalk_button">
+    <textarea name="post" placeholder="What's on your mind..."></textarea>
+    <input type="submit"  value="Post it!" class="unswtalk_button">
   </form>
   <br>
 </center>
@@ -25,7 +24,9 @@
 
 {% if posts %}
   {% for x in posts %}
+  <div class="posts">
     {{x}}<br>
+  </div>
   {% endfor %}
 {% endif %}
 {%if newPost%}

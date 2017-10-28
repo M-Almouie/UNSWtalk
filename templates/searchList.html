@@ -1,0 +1,18 @@
+{% extends "mainBase.html" %}
+{% block body_contents %}
+Search results for '{{requ}}'
+<br>
+<h1>Accounts</h1>
+{% if list %}
+  {% for x in list %}
+  <h3><li><a href="{{link[loop.index0].strip()}}"><img src="static/dataset-small/{{link[loop.index0].strip()}}/img.jpg"
+     height="60" width="60" onerror="this.src='static/img/noImg.png';"></a>
+     {{list[loop.index0].strip()}}</li></h3>
+    <br>
+  {% endfor %}
+{% else %}
+    No search results found
+{% endif %}
+
+
+{% endblock%}
