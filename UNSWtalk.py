@@ -238,7 +238,7 @@ def getNewPassword():
             code += random.choice('0123456789ABCDEF')
         os.system('echo "This is an email requesting a password change for your UNSWtalk account.'+
         'If you have requested this please copy the paste the following code on the Reset Password'+
-        ' Page"+code+"If you havent requested this, please ignore this email.'+
+        ' Page '+code+' If you havent requested this, please ignore this email.'+
         'Cheers - UNSWTalk Admin "| mail -s "subject of email" '+email+'')
         session['code'] = code
         return render_template('homePage.html')
