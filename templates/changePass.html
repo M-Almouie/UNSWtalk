@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body_contents %}
+<!--references http://flask.pocoo.org/docs/0.12/patterns/flashing/ -->
+<center>
+<div id="outter">
+  <form method="POST" action="changePass">
+        <div id="inner">
+          {% if error %}
+            <br><br>{{error}}<br><br><br><br><br><br>
+          {% else %}
+            <br><br>Enter the your new password for your UNSWtalk account<br><br><br><br><br><br>
+          {% endif %}
+          Password: <input  type="password" name="password1" style="margin-left: 20px;">
+          <br><br>
+          Confirm Password: <input  type="password" name="password2" style="margin-left: 20px;">
+          <br><br>
+          <input class="btn btn-primary btn-xl js-scroll-trigger" type ='submit' name='subChange'
+           value="Change Password" onclick="window.location='changePass.html';"/>
+           <br><br>
+          <a class="btn btn-primary btn-xl js-scroll-trigger" href="login">Cancel</a>
+          <br><br>
+        </div>
+  </form>
+
+  <div id="footer">
+    <footer>
+        <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto text-center">
+            <div class="footer">
+             <button style="color: black;font-weight: bold"> About Us </button>
+             <button style="color: black;font-weight: bold"> FAQ </button>
+             <p> copyright &copy;2017</p>
+           </div>
+          </div>
+        </div>
+        </div>
+    </footer>
+  </div>
+</div>
+<center>
+<img class="img-fluid" src="static/img/back.jpg" alt="">
+{% endblock %}

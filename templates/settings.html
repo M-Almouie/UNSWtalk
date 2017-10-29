@@ -1,13 +1,10 @@
 {% extends "mainBase.html" %}
 {% block body_contents %}
 <center><h1>Settings</h1>
-  <form method="POST" action="">
+  <form method="POST" action="changeDetails">
        <input type="submit" value="Change Profile Details" class="unswtalk_button"action="settings">
   </form>
-  <form method="POST" action="">
-    <input type="submit" value="Privacy" class="unswtalk_button" action="profilePage">
-  </form>
-  <form method="POST" action="">
+  <form method="POST" action="confirmDelAccount">
        <input type="submit" value="Remove Account" class="unswtalk_button" action="friendList">
   </form>
   <form method="POST" action="homePage">

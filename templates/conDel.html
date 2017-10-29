@@ -1,0 +1,12 @@
+{% extends "mainBase.html" %}
+{% block body_contents %}
+
+    Are you sure you want to delete your account?<br><br>
+    <form methods="POST" action="deleteAccount">
+        <input class="btn btn-primary btn-xl js-scroll-trigger" type ='submit' name='yes'
+           value="Yes">
+    </form>
+    <form methods="POST" action="settings">
+        <input class="btn btn-primary btn-xl js-scroll-trigger" type ='submit' name='no'>
+    </form>
+{% endblock %}

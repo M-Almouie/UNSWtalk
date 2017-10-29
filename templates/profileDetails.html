@@ -1,0 +1,27 @@
+{% extends "mainBase.html" %}
+{% block body_contents %}
+    <p class="boxx">
+      <form method="POST" action="confirmChange">
+          Full Name: <input type="textfield" name="changeName" style="margin-left: 20px;">
+          <br>
+          <br>
+          Suburb : <input type="textfield" name="changeSuburb" style="margin-left: 20px;">
+          <br>
+          <br>
+          Date Of Birth: <input type="date" name="changeBirthday" style="margin-left: 35px;">
+          <br>
+          <br>
+          Program: <input type="textfield" name="changeProgram" style="margin-left: 20px;">
+          <br>
+          <br>
+          Courses: <input type="textfield" name="changeCourses" style="margin-left: 20px;">
+          <br>
+          <br>
+          <input type ='submit' name='regbut' value="Confirm" >
+      </form>
+      
+      <input type ='reset' name='resetText' value="Reset">
+      <input type ='submit' name='cancel' value="Cancel">
+    </p>
+
+{% endblock %}

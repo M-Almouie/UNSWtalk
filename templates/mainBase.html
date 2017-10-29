@@ -64,17 +64,74 @@
   .active {
       background-color: #FF4500;
   }
+   </style>
+  <style>
+  div {
+      width: 1340px;
+      padding: 10px;
+      border: 5px solid gray;
+      margin: 0;
+  }
+  .posts {
+    width: 900px;
+    padding: 10px;
+    border: 5px solid gray;
+    margin: 0;
+  }
+
+  .reply {
+    width: 450px;
+    padding: 10px;
+    border: 7px solid gray;
+    margin: 0;
+  }
+  
+  
+  ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #555;
+  }
+
+  li img{
+      float: left;
+  }
+
+  li h3{
+      float: left;
+      color: #FF4500;
+  }
+
+  li input {
+      float: right;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+  }
+
+  li input:hover:not(.active) {
+      background-color: rgb(255,69,0);
+  }
+
+  .active {
+      background-color: #FF4500;
+  }
   </style>
+ 
 <ul>
   <form method="POST" >
       <a href="profilePage">
-        <li><img src="{{ img }}" height="60" width="60"></li>
+        <li><img src="{{ img }}" onerror="this.src='static/img/noImg.png';" height="60" width="60"></li>
       </a>
       <li><h3>Welcome {{user}}</h3></li>
   </form>
   <center>
     <form class="form-wrapper" method="POST" action="searchList">
-        <input type="text" name="search" placeholder="Search..." required>
+        <input type="text" name="search" placeholder="Search..." required height="60" width="60">
         <input type="submit" value="go" id="submit">
     </form>
   </center>
@@ -97,17 +154,9 @@
 {% endblock %}
 <center>
   <footer>
-      <div class="container">
-      <div class="row">
-        <div class="col-lg-8 mx-auto text-center">
-          <div class="footer">
            <button style="color: black;font-weight: bold"> About Us </button>
            <button style="color: black;font-weight: bold"> FAQ </button>
            <p> copyright &copy;2017</p>
-         </div>
-        </div>
-      </div>
-      </div>
   </footer>
 </center>
 </body>

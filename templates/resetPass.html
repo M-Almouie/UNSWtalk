@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body_contents %}
+<!--references http://flask.pocoo.org/docs/0.12/patterns/flashing/ -->
+<center>
+<div id="outter">
+  <form method="POST" action="checkPassAuth">
+        <div id="inner">
+          {% if error %}
+            <br><br>{{error}}<br><br><br><br><br><br>
+          {% else %}
+            <br><br>Enter the Authentication code to reset your password<br><br><br><br><br><br>
+          {% endif %}
+          Code: <input  type="textfield" name="passCode" style="margin-left: 20px;">
+          <br>
+          <br>
+          <br><br>
+          <input class="btn btn-primary btn-xl js-scroll-trigger" type ='submit' name='subCode'
+           value="Send" onclick="window.location='changePass.html';"/>
+           <br><br>
+          <a class="btn btn-primary btn-xl js-scroll-trigger" href="login">Cancel</a>
+          <br><br>
+        </div>
+  </form>
+
+  <div id="footer">
+    <footer>
+        <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto text-center">
+            <div class="footer">
+             <button style="color: black;font-weight: bold"> About Us </button>
+             <button style="color: black;font-weight: bold"> FAQ </button>
+             <p> copyright &copy;2017</p>
+           </div>
+          </div>
+        </div>
+        </div>
+    </footer>
+  </div>
+</div>
+<center>
+<img class="img-fluid" src="static/img/back.jpg" alt="">
+{% endblock %}

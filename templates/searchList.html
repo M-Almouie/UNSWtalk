@@ -6,7 +6,7 @@ Search results for '{{requ}}'
 {% if list %}
   {% for x in list %}
   <h3><li><a href="{{link[loop.index0].strip()}}"><img src="static/dataset-small/{{link[loop.index0].strip()}}/img.jpg"
-     height="60" width="60" onerror="this.src='static/img/noImg.png';"></a>
+      onerror="this.src='static/img/noImg.png';" height="60" width="60"></a>
      {{list[loop.index0].strip()}}</li></h3>
     <br>
   {% endfor %}

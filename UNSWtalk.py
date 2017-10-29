@@ -4,16 +4,21 @@
 # https://cgi.cse.unsw.edu.au/~cs2041/assignments/UNSWtalk/
 
 
+
+
 # No info passed, initialise to "" or N/A
 ##################################################################
 
-import os
 from flask import Flask, render_template, session, request,redirect
-import re, os
+import re, os, random, shutil
 from datetime import datetime
-import random
-
+from werkzeug.utils import secure_filename
 students_dir = "dataset-small";
+UPLOAD_FOLDER = 'static/'+students_dir
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+
+
 masUsername = ""
 masPassword = ""
 masFullName = ""
@@ -28,6 +33,7 @@ masFriends = []
 masCourses = []
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def matchLogin(string,pattern):
     match = re.search(pattern,string)
@@ -56,6 +62,7 @@ def getPosts(user):
 @app.route('/', methods=['GET','POST'])
 @app.route('/homePage', methods=['GET','POST'])
 def begin():
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     return render_template('homePage.html')
 
 @app.route('/mainPage', methods=['GET','POST'])
@@ -134,14 +141,17 @@ def authenLog():
                 # if no image pass question mark image
                 session['img'] = img
                 post = None
-                return redirect("/profilePage", code=302)
+                #profilePage()
+                return redirect("profilePage", code=302)
                 #return render_template('profilePage.html',user=username,name=realName,
                  #prog=realProgram, email=realEmail, zid=realZid,sub=realSuburb,
                  #dob=realBirthday,courses=masCourses,posts=masPosts,img = img)
             else:
-                error= "Invalid Username or Password choice. Please enter a vlid Username and Password"
+                error= "Real pass: "+realPassword+", entered: "+password
                 return render_template('login.html',error=error)
     error= "Invalid Username or Password choice. Please enter a valid Username and Password333"
+    password = ""
+    username = ""
     return render_template('login.html',error=error)
 
 @app.route('/authenRegi',methods=['GET','POST'])
@@ -152,6 +162,10 @@ def authenRegi():
     fullName = request.form.get('fullName','')
     suburb = request.form.get('suburb','')
     birthday = request.form.get('birthday','')
+    program = request.form.get('program','')
+    courses = ()
+    temp = request.form.get('courses','')
+    temp.split(",")
     if len(username) > 32:
         username = username[:32]
     if os.path.isdir("static/"+students_dir+"/"+username) == True:
@@ -166,7 +180,7 @@ def authenRegi():
     password = re.sub(r'\@|\||\<|\>|\#',"",password)
     email = request.form.get('email','')
     email = request.form.get('email','')
-    if not re.match(r'\@',email):
+    if not re.match(r'[A-Za-z\.]+\@[A-Za-z\.]+',email):
         error = "Invalid Email. Please enter a valid Email"
         return render_template('register.html',error=error)
     newDir = "static/"+students_dir+"/"+username
@@ -175,12 +189,48 @@ def authenRegi():
     infoFile = open(studFile,'w')
     infoFile.write("zid: "+username+"\n")
     infoFile.write("password: "+password+"\n")
-    infoFile.write("suburb: "+suburb+"\n")
-    infoFile.write("email: "+email+"\n")
+    if not suburb == "":
+        infoFile.write("suburb: "+suburb+"\n") 
+    infoFile.write("email: "+email+"\n") 
     infoFile.write("birthday: "+birthday+"\n")
     infoFile.write("full_name: "+fullName+"\n")
+    infoFile.write("program: "+program+"\n")
+    temp2 = ''.join(courses)
+    infoFile.write("courses: "+temp2+"\n")
     infoFile.close()
-    return render_template('profilePage.html',username=password)
+    session['username'] = username
+    session['password'] = password
+    session['name'] = fullName
+    session['program'] = program
+    session['email'] = email
+    session['zid'] = username
+    session['suburb'] = suburb
+    session['birthday'] = birthday
+    return redirect('confirmReg')
+
+@app.route('/confirmReg',methods=['GET','POST'])
+def confirmReg():
+    code = ""
+    for i in range(16):
+        code += random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    os.system('echo "Welcome to UNSWTalk! This is an email informing you that you have requested '+
+    'to create a UNSWTalk with this Email address.'+
+    'If you have requested this please copy the paste the following code on the Reset Password'+
+    ' Page   '+code+'   If you haven\'t requested this, please ignore this email.'+
+    'Cheers - UNSWTalk Admin "| mail -s "UNSWtalk Account Creation" '+session['email']+'')
+    session['code'] = code
+    newError = None
+    return render_template('reg.html',code=code,error=newError)
+    
+@app.route('/reg',methods=['GET','POST'])
+def reg():
+    realCode = session['code']
+    code = request.form.get('passCode')
+    if (realCode == code):
+        return redirect("profilePage", code=302)
+    else:
+        error = "Wrong authentication code"
+        return render_template('reg.html',error=error)
 
 @app.route('/feed',methods=['GET','POST'])
 def feed():
@@ -235,16 +285,56 @@ def getNewPassword():
     if re.match(r'[A-Za-z0-9\.]+\@[A-Za-z0-9\.]+',email):
         code = ""
         for i in range(16):
-            code += random.choice('0123456789ABCDEF')
+            code += random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         os.system('echo "This is an email requesting a password change for your UNSWtalk account.'+
         'If you have requested this please copy the paste the following code on the Reset Password'+
         ' Page '+code+' If you havent requested this, please ignore this email.'+
-        'Cheers - UNSWTalk Admin "| mail -s "subject of email" '+email+'')
+        'Cheers - UNSWTalk Admin "| mail -s "UNSWtalk reset password" '+email+'')
         session['code'] = code
-        return render_template('homePage.html')
+        session['email'] = email
+        newError = None
+        return render_template('resetPass.html',code=code,error=newError)
     else:
         error = "Please enter a valid email address associated with UNSWtalk"
         return render_template('forgotPass.html',error=error)
+
+@app.route('/checkPassAuth',methods=['GET','POST'])
+def checkAuthPassword():
+    realCode = session['code']
+    code = request.form.get('passCode')
+    if (realCode == code):
+        return render_template('changePass.html')
+    else:
+        error = "Wrong authentication code"
+        return render_template('forgotPass.html',error=error)
+
+@app.route('/changePass',methods=['GET','POST'])
+def changePassword():
+    pass1 = request.form.get('password1')
+    pass2 = request.form.get('password2')
+    realEmail = session['email']
+    if len(pass1) > 32:
+        pass1 = pass1[:32]
+    if pass1 == "" or len(pass1) < 8:
+        error = "Invalid Password choice. Please choose a valid Password"
+        return render_template('changePass.html',error=error)
+    pass1 = re.sub(r'\@|\||\<|\>|\#',"",pass1)
+    if (pass1 != pass2):
+        error = "Passwords do not match. Please re-enter the exact password"
+        return render_template('changePass.html',error=error)
+    else:
+        for filename in os.listdir(os.path.join("static/"+students_dir)):
+            details_filename = os.path.join("static",students_dir,filename, "student.txt")
+            with open(details_filename) as f:
+                details = f.read()
+                temp = re.search(r'email: *(.*)',details)
+                email = temp.group(1) if temp else ""
+                if email == session['email']:
+                    details = re.sub(r'password:.*','password: %s' % pass1,details)
+                    file = open(details_filename,'w')
+                    file.write(details)
+                    mess = "Password has been changed" 
+                    return render_template('homePage.html', mess=mess)
 
 
 @app.route('/profilePage',methods=['GET','POST'])
@@ -261,17 +351,18 @@ def profilePage():
         newPost = newPost+"\nTime:"+now.isoformat()
         newPost = newPost + "\nFrom:"+masUsername
         maxi = 1
-        for filename in os.listdir(os.path.join(students_dir,masUsername)):
+        for filename in os.listdir(os.path.join("static/",students_dir,masUsername)):
             temp = re.search(r'^(\d).',filename)
             match = temp.group(1) if temp else ""
             if temp:
-                if match > maxi:
-                    maxi = match
+                num = int(match)
+                if num > maxi:
+                    maxi = num
         maxi = int(maxi)
         maxi = maxi + 1
         maxi = str(maxi)
         maxi = maxi+".txt"
-        file = open(os.path.join(students_dir,masUsername,maxi), 'w')
+        file = open(os.path.join("static/",students_dir,masUsername,maxi), 'w')
         file.write(newPost)
         file.close()
     masPassword = session['password']
@@ -324,12 +415,91 @@ def showSettings():
     img = session['img']
     return render_template('settings.html', user=masUsername, img=img)
 
+@app.route('/uploadImg',methods=['GET','POST'])
+def uploadImg():
+    masUsername = session['username']
+    masFullName = session['name']
+    masProgram = session['program']
+    masEmail = session['email']
+    masZid = session['zid']
+    masSuburb = session['suburb']
+    masDob = session['birthday']
+    masCourses = session['course']
+    masPosts = getPosts(masUsername)
+    img =  request.files['file']
+    match = re.search(r'\.(.*)$',secure_filename(img.filename))
+    temp = match.group(1) if match else ""
+    if img and re.search(r'PNG|png|jpeg|jpg',temp):
+        filename = secure_filename(img.filename)
+        img.save(os.path.join(app.config['UPLOAD_FOLDER'],masUsername,filename))
+        img = app.config['UPLOAD_FOLDER']+'/'+masUsername+'/'+filename
+        return render_template('profilePage.html',user=masUsername,name=img,
+            prog=masProgram, email=masEmail, zid = masZid,sub= masSuburb,
+            dob = masDob,courses=masCourses,posts=masPosts, img=img)
+    else:
+        imgError = "Image not selected or not a valid image file"
+        return render_template('profilePage.html',user=masUsername,name=masFullName,
+            prog=masProgram, email=masEmail, zid = masZid,sub= masSuburb,
+            dob = masDob,courses=masCourses,posts=masPosts, imgError=imgError)
+
+@app.route('/changeDetails',methods=['GET','POST'])
+def changeDetails():
+    masUsername = session['username']
+    masFullName = session['name']
+    masProgram = session['program']
+    masEmail = session['email']
+    masZid = session['zid']
+    masSuburb = session['suburb']
+    masDob = session['birthday']
+    masCourses = session['course']
+    img =  session['img']
+    return render_template('profileDetails.html',user=masUsername,name=masFullName,
+            prog=masProgram, email=masEmail, zid = masZid,sub= masSuburb,
+            dob = masDob,courses=masCourses)
+
+@app.route('/confirmChange',methods=['GET','POST'])
+def confirmDetails():
+    masUsername = session['username']
+    with open('static/'+students_dir+'/'+masUsername+'/student.txt') as f:
+        details = f.read()
+        name = request.form.get('changeName')
+        if name != "":
+            session['name'] = name
+        prog = request.form.get('changeProgram')
+        if(prog != ""):
+            session['program'] = request.form.get('changeProgram')
+        zid = request.form.get('changeZid') 
+        if(zid != ""):
+            session['zid'] = request.form.get('changeZid')
+        sub = request.form.get('changeSuburb')
+        if(sub != ""):
+            session['suburb'] = request.form.get('changeSuburb')
+        dob = request.form.get('changeBirthday')
+        if (dob != ""):
+            session['birthday'] = request.form.get('changeBirthday')
+        course = request.form.get('changeCourses')
+        if(course != ""):
+            courses = ()
+            courses = course.split(',')
+            session['course'] = courses
+    return redirect("/~z5114185/ass2/UNSWtalk.cgi/profilePage", code=302)
+
+@app.route('/confirmDelAccount',methods=['GET','POST'])
+def showDelAccount():
+    return render_template('conDel.html')
+
+
+@app.route('/deleteAccount',methods=['GET','POST'])
+def delAccount():
+    masUsername = session['username']
+    students = sorted(os.listdir("static/"+students_dir))
+    for x in students:
+        if re.match(r''+masUsername+'',x):
+            shutil.rmtree("static/"+students_dir+'/'+x)
+            break
+    return render_template('homePage.html')
+
+
 if __name__ == '__main__':
     app.secret_key = os.urandom(12)
     app.run(debug=True)
-
-
-
-#<form method="POST" action="homePage">
-#<li><input type="submit" value="Logout" class="unswtalk_button"></li>
-#</form>

@@ -1,10 +1,27 @@
 {% extends "mainBase.html" %}
 {% block body_contents %}
-
+<script>
+function myFunction() {
+    document.getElementById("demo").innerHTML = "<textarea cols = '50' rows = '20' name='text' id='text_id'"+
+    " class='form-control' style='resize:vertical' ></textarea>  <br> <form method='POST' action='addReply'>"+
+    " <input type='submit'  value='Send Reply!' class='unswtalk_button'></form>";
+}
+</script>
 <center>
   <br><br><br><br>
-  <img src="static/dataset-small/{{user}}//img.jpg">
-  <br><br><br>
+  <img src="{{img}}" onerror="this.src='static/img/noImg.png';" height="80" width="80">
+  <br>
+  {% if imgError%}
+    {{imgError}}
+  {% endif%}
+    <br>
+  <a>Upload Image</a>
+    <br>  <br>  <br>
+  <form method="POST" action="uploadImg" enctype=multipart/form-data>
+      <input class="btn btn-primary btn-xl js-scroll-trigger" type="file" name="file">
+      <input class="btn btn-primary btn-xl js-scroll-trigger" type="submit" name="imgUp" value="Upload">
+      <br><br>
+  </form>
   <form method="POST" action="profilePage">
     <textarea name="post" placeholder="What's on your mind..."></textarea>
     <input type="submit"  value="Post it!" class="unswtalk_button">
@@ -27,8 +44,14 @@
   <div class="posts">
     {{x}}<br>
   </div>
+  <p id="demo"></p>
+  <button type="button" value="Reply" onclick="myFunction()" class="unswtalk_button">Reply</button>
+  <br>
   {% endfor %}
 {% endif %}
+
+
+
 {%if newPost%}
   <h3><i>Most recent Post</i></h3></i>
   {{newPost}}
