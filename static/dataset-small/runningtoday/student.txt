@@ -1,0 +1,7 @@
+zid: runningtoday
+password: runningtoday
+suburb: Ingleburn
+email: d.almouiee@gmail.com
+birthday: 12/12/2012
+full_name: Moey the man
+program: BS Software Engineering
